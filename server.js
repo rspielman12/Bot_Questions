@@ -14,6 +14,7 @@ const BEARER_TOKEN = '2254da6bfa596227708d80b3780babbf230603786ea2a4980e66d98abd
 const BOT_API_MAP = {
   'Digi AI Assistant': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/wxepOdO8DrIY3Hgszjip/questions',
   'AnywhereUSB Plus': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/riOJ116hCPEI9rqPz5oV/questions'
+  'OpenGear Support': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/BeEqjFkaIQM3Pn6xgWcG/questions'
 };
 
 async function fetchAllQuestions(botName) {
