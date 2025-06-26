@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download Bot Questions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 3px solid #ccc;
+      border-top: 3px solid #333;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .spinner.active {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
+    }
+
+    #toast.show {
+      display: block;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; bottom: 0px; }
+      to   { opacity: 1; bottom: 20px; }
+    }
+
+    @keyframes fadeout {
+      from { opacity: 1; bottom: 20px; }
+      to   { opacity: 0; bottom: 0px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Download Bot Questions</h2>
+
+  <div class="form-group">
+    <label for="bot-select">Choose a Bot:</label>
+    <select id="bot-select">
+      <option value="Digi AI Assistant">Digi AI Assistant</option>
+      <option value="AnywhereUSB Plus">AnywhereUSB Plus</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date">
+  </div>
+
+  <div class="form-group">
+    <label for="end-date">End Date:</label>
+    <input type="date" id="end-date">
+  </div>
+
+  <div class="controls">
+    <button id="download-button" onclick="downloadCSV()">Download CSV</button>
+    <div class="spinner" id="spinner"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.style.backgroundColor = isError ? '#e74c3c' : '#333';
+      toast.className = 'show';
+      setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+      }, 3000);
+    }
+
+    async function downloadCSV() {
+      const botName = document.getElementById('bot-select').value;
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+      const button = document.getElementById('download-button');
+      const spinner = document.getElementById('spinner');
+
+      if (!startDate || !endDate) {
+        alert("Please select both start and end dates.");
+        return;
+      }
+
+      try {
+        button.disabled = true;
+        spinner.classList.add("active");
+
+        const response = await fetch(
+          `http://localhost:3000/questions?startDate=${startDate}&endDate=${endDate}&bot=${encodeURIComponent(botName)}`
+        );
+        if (!response.ok) throw new Error("Failed to fetch data.");
+
+        const data = await response.json();
+        const questions = data.questions;
+
+        if (questions.length === 0) {
+          showToast("No questions found for the selected date range.", true);
+          return;
+        }
+
+        const csvContent = [
+          ['ID', 'Question Text', 'Answer', 'Created At', 'Rating', 'Could Answer'],
+          ...questions.map(q => [
+            q.id,
+            `"${(q.question || '').replace(/"/g, '""')}"`,
+            `"${(q.answer || '').replace(/"/g, '""')}"`,
+            q.createdAt,
+            q.rating ?? '',
+            q.couldAnswer ?? ''
+          ])
+        ]
+        .map(row => row.join(','))
+        .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${botName.replace(/\s+/g, '_')}_questions.csv`;
+        link.click();
+
+        showToast("Download complete!");
+
+      } catch (err) {
+        console.error(err);
+        showToast("There was an error downloading the questions.", true);
+      } finally {
+        button.disabled = false;
+        spinner.classList.remove("active");
+      }
+    }
+  </script>
+
+</body>
+</html>
