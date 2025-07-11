@@ -14,6 +14,10 @@ const BEARER_TOKEN = '2254da6bfa596227708d80b3780babbf230603786ea2a4980e66d98abd
 const BOT_API_MAP = {
   'Digi AI Assistant': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/wxepOdO8DrIY3Hgszjip/questions',
   'AnywhereUSB Plus': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/riOJ116hCPEI9rqPz5oV/questions',
+  'DRM': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/qlbyJomxey4giLTR7KON/questions',
+  'Portserver and Digi One': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/IuyRPk0OT9XcxpI7jOqj/questions',
+  'AnywhereUSB G2': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/Dj9BFMciTKJ2p3nKurEH/questions',
+  'XCTU': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/ISpGC8iNTP5KA9PWJbCy/questions',
   'OpenGear Support': 'https://docsbot.ai/api/teams/my4YXyYm6SQ5ewtD75RN/bots/BeEqjFkaIQM3Pn6xgWcG/questions'
 };
 
